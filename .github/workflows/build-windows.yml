@@ -1,7 +1,10 @@
 name: Build DroidStar Windows
 
 on:
-  workflow_dispatch:  # Se lanza manualmente con un botón
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-windows:
@@ -9,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Instalar Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: '6.5.0'
           host: 'windows'
@@ -33,7 +36,7 @@ jobs:
           windeployqt build/release/DroidStar.exe
 
       - name: Subir ejecutable como artefacto
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: DroidStar-Windows
           path: build/release/
