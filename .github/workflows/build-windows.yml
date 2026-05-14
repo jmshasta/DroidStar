@@ -2,6 +2,10 @@ name: Build DroidStar Windows
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -12,38 +16,52 @@ jobs:
 
     steps:
       - name: Checkout código
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
-      - name: Instalar Qt
+      - name: Instalar Qt 6.5.0 con módulos necesarios
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.5.0'
           host: 'windows'
           target: 'desktop'
           arch: 'win64_mingw'
-          modules: qtmultimedia
+          modules: qtmultimedia qtserialport qtsvg qt5compat
 
       - name: Configurar CMake
         shell: cmd
         run: |
-          cd %GITHUB_WORKSPACE%
+          if exist build rmdir /S /Q build
           mkdir build
           cd build
-          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+          cmake .. ^
+            -G "MinGW Makefiles" ^
+            -DCMAKE_BUILD_TYPE=Release
 
       - name: Compilar
         shell: cmd
         run: |
-          cd %GITHUB_WORKSPACE%\build
+          cd build
           mingw32-make -j4
 
-      - name: Empaquetar DLLs
+      - name: Empaquetar dependencias Qt
         shell: cmd
         run: |
-          windeployqt %GITHUB_WORKSPACE%\build\DroidStar.exe
+          windeployqt --release build\DroidStar.exe
 
       - name: Subir artefacto
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v4
         with:
           name: DroidStar-Windows
-          path: ${{ github.workspace }}\build
+          path: |
+            build\DroidStar.exe
+            build\*.dll
+            build\platforms\
+            build\styles\
+            build\iconengines\
+            build\imageformats\
+            build\multimedia\
+            build\mediaservice\
+            build\audio\
+            build\generic\
+            build\plugins\
+            build\qml\
