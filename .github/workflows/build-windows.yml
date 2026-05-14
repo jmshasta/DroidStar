@@ -1,0 +1,39 @@
+name: Build DroidStar Windows
+
+on:
+  workflow_dispatch:  # Se lanza manualmente con un botón
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.5.0'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_mingw'
+
+      - name: Compilar DroidStar
+        shell: cmd
+        run: |
+          mkdir build
+          cd build
+          qmake ../DroidStar.pro
+          mingw32-make -j4
+
+      - name: Empaquetar DLLs
+        shell: cmd
+        run: |
+          windeployqt build/release/DroidStar.exe
+
+      - name: Subir ejecutable como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: DroidStar-Windows
+          path: build/release/
