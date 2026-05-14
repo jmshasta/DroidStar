@@ -18,14 +18,14 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Instalar Qt 6.5.0 con módulos necesarios
+      - name: Instalar Qt 6.5.0
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.5.0'
           host: 'windows'
           target: 'desktop'
           arch: 'win64_mingw'
-          modules: qtmultimedia qtserialport qtsvg qt5compat
+          modules: qtmultimedia qtserialport qt5compat
 
       - name: Configurar CMake
         shell: cmd
@@ -52,16 +52,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DroidStar-Windows
-          path: |
-            build\DroidStar.exe
-            build\*.dll
-            build\platforms\
-            build\styles\
-            build\iconengines\
-            build\imageformats\
-            build\multimedia\
-            build\mediaservice\
-            build\audio\
-            build\generic\
-            build\plugins\
-            build\qml\
+          path: build
