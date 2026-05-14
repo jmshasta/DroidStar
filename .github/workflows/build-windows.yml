@@ -28,13 +28,13 @@ jobs:
           cd ${{ github.workspace }}
           mkdir build
           cd build
-          qmake ${{ github.workspace }}\DroidStar.pro
+          qmake ${{ github.workspace }}\droidStar.pro
           mingw32-make -j4
 
       - name: Empaquetar DLLs
         shell: cmd
         run: |
-          windeployqt ${{ github.workspace }}\build\release\DroidStar.exe
+          windeployqt ${{ github.workspace }}\build\release\droidStar.exe
 
       - name: Subir ejecutable como artefacto
         uses: actions/upload-artifact@v4.6.2
