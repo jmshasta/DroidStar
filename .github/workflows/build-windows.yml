@@ -22,22 +22,27 @@ jobs:
           target: 'desktop'
           arch: 'win64_mingw'
 
-      - name: Compilar DroidStar
+      - name: Configurar CMake
         shell: cmd
         run: |
           cd ${{ github.workspace }}
           mkdir build
           cd build
-          qmake ${{ github.workspace }}\droidStar.pro
+          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+
+      - name: Compilar
+        shell: cmd
+        run: |
+          cd ${{ github.workspace }}\build
           mingw32-make -j4
 
       - name: Empaquetar DLLs
         shell: cmd
         run: |
-          windeployqt ${{ github.workspace }}\build\release\droidStar.exe
+          windeployqt ${{ github.workspace }}\build\DroidStar.exe
 
-      - name: Subir ejecutable como artefacto
+      - name: Subir artefacto
         uses: actions/upload-artifact@v4.6.2
         with:
           name: DroidStar-Windows
-          path: ${{ github.workspace }}\build\release\
+          path: ${{ github.workspace }}\build\
