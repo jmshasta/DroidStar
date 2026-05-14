@@ -8,7 +8,7 @@ env:
 
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
       - name: Checkout código
@@ -25,18 +25,19 @@ jobs:
       - name: Compilar DroidStar
         shell: cmd
         run: |
+          cd ${{ github.workspace }}
           mkdir build
           cd build
-          qmake ../DroidStar.pro
+          qmake ${{ github.workspace }}\DroidStar.pro
           mingw32-make -j4
 
       - name: Empaquetar DLLs
         shell: cmd
         run: |
-          windeployqt build/release/DroidStar.exe
+          windeployqt ${{ github.workspace }}\build\release\DroidStar.exe
 
       - name: Subir ejecutable como artefacto
         uses: actions/upload-artifact@v4.6.2
         with:
           name: DroidStar-Windows
-          path: build/release/
+          path: ${{ github.workspace }}\build\release\
